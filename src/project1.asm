@@ -32,17 +32,6 @@
 
 ; AND , OR, XOR (if both are equal - 0 otherwise 1)
 
-; PrintTwoLetters:
-;     ld hl, msg
-;     ld a, (hl)
-;     rst $10
-;     inc hl
-;     ld a, (hl)
-;     rst $10
-;     inc hl
-;     ld a, (hl)
-;     rst $10
-;     ret
 
 ATTR_S:     equ $5c8d               ; Format: FLASH, BRIGHT, PAPER, INK (FBPPPIII)
 ATTR_T:     equ $5c8f               ; System variables: current attribute (FBPPPIII)
@@ -67,12 +56,25 @@ CLS:    equ $0daf
 
 Main:
     ld a, $0e               ; A = color attributes
-    ld hl, ATTR_T           ; Load into memory
+    ld hl, ATTR_T           ; HL = address permanent attributes
+    ld (hl), a              ; Load into memory
+    ld hl, ATTR_S           ; HL = address permanent attributes
+    ld (hl), a              ; Load into memory
+    call CLS                ; Clear screen: use ATTR_S
+    ld b, $18-$0a           ; B = Y coordinate
+    ld c, $21-$03           ; C = X coordinate
+    call LOCATE             ; Position cursor
+    ld hl, Msg              ; HL = message address
 
+Loop:
+    ld a, (hl)              ; A = string character
+    or a                    ; A = 0?
+    jr z, Exit              ; If A = 0, skip
+    
 
+Exit:
 
-
-
+Msg:
 ;;
 ;; Set up the Next output
 ;;
