@@ -55,7 +55,7 @@ LOCATE:   equ $0dd9
 CLS:    equ $0daf
 
 Main:
-    ld a, $0e               ; A = color attributes
+    ld a, $e2               ; A = color attributes
     ld hl, ATTR_T           ; HL = address permanent attributes
     ld (hl), a              ; Load into memory
     ld hl, ATTR_S           ; HL = address permanent attributes
@@ -70,11 +70,16 @@ Loop:
     ld a, (hl)              ; A = string character
     or a                    ; A = 0?
     jr z, Exit              ; If A = 0, skip
-    
+    rst $10                 ; Print character
+    inc hl                  ; HL = address next character
+    jr Loop                 ; Loop until A = 0
+     
+
 
 Exit:
+    jr Exit                 ; Infinite loop
 
-Msg:
+Msg: defm "Hello ZX Spectrum Assembly", $00     ; String ending in 0 = null
 ;;
 ;; Set up the Next output
 ;;
